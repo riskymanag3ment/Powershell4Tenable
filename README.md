@@ -19,20 +19,37 @@ You could just add the UUID for the scanner for the commands that use the Scanne
 There's still work to be done and most of these functions don't have proper error handling. Used at your own risk.
 
 Functions Include
+
 Get-TenableScans
+
 Remove-TenableScan -ScanID 111
+
 Start-TenableScan -ScanID 111
+
 Stop-TenableScan -ScanID 111
+
 Get-TenableScanInfo -ScanID 111
+
 Get-TenableAssetList
+
 Get-TenableAssetInfo -UUID 67555555-13d0-5555-1111-0b08315a2f64
+
 Get-TenableScannerList
+
 Update-TenableScan -ScanID 1111 -TextTargets "TestComputer1,TestComputer2"  *This currently only updates TextTargets. It may be broken out later
+
 Export-TenableVulnerabilities -AssetNum 500
+
 Get-VulnerabilityExportStatus 
+
 Get-TenableAgentList
+
 Get-TenableCredentialList
+
 Get-TenableExclusionList
+
 Get-TenableVulnerabilityList
+
 Get-TenablePluginList
+
 Get-TenableAuditLog
