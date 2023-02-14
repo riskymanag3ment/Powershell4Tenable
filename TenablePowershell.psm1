@@ -1,5 +1,5 @@
 ﻿# Powershell4Tenable
-# 08/25/2022
+# 
 
 Function ConnectTo-Tenable {
 param(
@@ -99,11 +99,20 @@ Function Get-TenableScannerList {
 Function Update-TenableScan {
 param(    
     [Parameter(Mandatory = $true)] [String[]]$ScanID,
-    [Parameter(Mandatory = $true)] [String[]]$TextTargets
+    [Parameter(Mandatory = $true)] [String[]]$TextTargets,
+    [Parameter(Mandatory = $false)] [String[]]$ScannerID
     )
+    
+    if ($ScannerID -eq $null){
+        $ScannerName = Get-TenableScanInfo -ScanID $ScanID | select scanner_name
+        $ScannerName = $ScannerName.scanner_name
+        $ScannerID = Get-TenableScannerList | Where-Object {$_.name -like "$ScannerName"} | select uuid
+        $ScannerID = $ScannerID.uuid
+    }
+    
     $body = @{
         text_targets = "$TextTargets"
-        scanner_id = $defaultScannerID
+        scanner_id = $ScannerID
         }
     $body = $body | ConvertTo-Json
     
@@ -112,6 +121,7 @@ param(
     $headers.Add("X-ApiKeys", $apikey)
     $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/scans/$ScanID" -Method PUT -Headers $headers -Body "{""settings"":$body}"
     $response = $response.Content | ConvertFrom-Json
+    Clear-Variable $ScannerID
     Return $response
 }
 Function Export-TenableVulnerabilities{
@@ -141,9 +151,8 @@ Function Get-VulnerabilityExportStatus {
 }
 Function Get-TenableAgentList {
 param(    
-    [Parameter(Mandatory = $false)] [String[]]$ScannerID
+    [Parameter(Mandatory = $true)] [String[]]$ScannerID
     )
-    if ($ScannerID -eq $null ){ $ScannerID = $defaultScannerID }
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("X-ApiKeys", $apikey)
