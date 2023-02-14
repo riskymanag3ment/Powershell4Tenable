@@ -12,8 +12,6 @@ You need to variables set up. the $apikey and the $defaultScannerID. This is an 
 
 $apikey = "accessKey=XXXX;secretKey=a246bf07a405d6c8bds5af5616516512110190f7a9a22a1c0257"
 
-$defaultScannerID = "12345678-9abc-defg-1234-56789abcdefg"
-
 You could just add the UUID for the scanner for the commands that use the ScannerID. In my use case, I reference pretty much a single scannerID group and found that it's easier to define that once. 
 
 There's still work to be done and most of these functions don't have proper error handling. Used at your own risk.
