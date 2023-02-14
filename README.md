@@ -34,7 +34,7 @@ Get-TenableAssetInfo -UUID 67555555-13d0-5555-1111-0b08315a2f64
 
 Get-TenableScannerList
 
-Update-TenableScan -ScanID 1111 -TextTargets "TestComputer1,TestComputer2"  *This currently only updates TextTargets. It may be broken out later
+Update-TenableScan -ScanID 1111 -TextTargets "TestComputer1,TestComputer2" -ScannerID 67555555-13d0-5555-1111-0b08315a2f64  *This currently only updates TextTargets. It may be broken out later
 
 Export-TenableVulnerabilities -AssetNum 500
 
