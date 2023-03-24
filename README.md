@@ -8,7 +8,7 @@ Very few of these powershell functions have great failsafe processes, so please 
 
 PS C:\> Import-Module .\TenablePowershell.psm1
 
-You need to variables set up. the $apikey and the $defaultScannerID. This is an example of what they should look like. 
+You need to variables set up. the $apikey. This is an example of what they should look like. 
 
 $apikey = "accessKey=XXXX;secretKey=a246bf07a405d6c8bds5af5616516512110190f7a9a22a1c0257"
 
