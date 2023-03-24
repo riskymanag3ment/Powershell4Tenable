@@ -1,5 +1,5 @@
 ﻿# Powershell4Tenable
-# 
+# 2023.03.24 Added User List, Create, Update and Delet
 
 Function ConnectTo-Tenable {
 param(
@@ -100,9 +100,9 @@ Function Update-TenableScan {
 param(    
     [Parameter(Mandatory = $true)] [String[]]$ScanID,
     [Parameter(Mandatory = $true)] [String[]]$TextTargets,
-    [Parameter(Mandatory = $false)] [String[]]$ScannerID
+    [Parameter(Mandatory = $false)] [String[]]$ScannerID,
+    [Parameter(Mandatory = $false)] [String[]]$EmailAddress
     )
-    
     if ($ScannerID -eq $null){
         $ScannerName = Get-TenableScanInfo -ScanID $ScanID | select scanner_name
         $ScannerName = $ScannerName.scanner_name
@@ -226,4 +226,116 @@ $headers.Add("X-ApiKeys", $apikey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/assets/$uuid" -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response
+}
+Function Get-TenableUser{
+param(    
+    [Parameter(Mandatory = $false)] [String[]]$UUID
+    )
+if ($UUID -ne $null) {
+    $headers=@{}
+    $headers.Add("accept", "application/json")
+    $headers.Add("X-ApiKeys", $apikey)
+    $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID" -Method GET -Headers $headers
+    $response = $response.Content | ConvertFrom-Json
+    return $response
+}
+else {
+    $headers=@{}
+    $headers.Add("Accept", "application/json")
+    $headers.Add("X-ApiKeys", $apikey)
+    $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users" -Method GET -Headers $headers
+    $response = $response.Content | ConvertFrom-Json
+    return $response.users
+}
+}
+Function Remove-TenableUser{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$UUID
+    )
+    $headers=@{}
+    $headers.Add("accept", "application/json")
+    $headers.Add("X-ApiKeys", $apikey)
+    $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID" -Method DELETE -Headers $headers
+    $response = $response.Content | ConvertFrom-Json
+    return $response
+}
+Function Create-TenableUser{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$EmailAddress,
+    [Parameter(Mandatory = $true)] [String[]]$Password,
+    [Parameter(Mandatory = $true)] [String[]]$Name,
+    [Parameter(Mandatory = $true)] [String[]]$Permissions
+    )
+$body = @{
+    username = $EmailAddress
+    password = $Password
+    permissions = $Permissions
+    name = $name
+    }
+$body = $body | ConvertTo-Json
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users" -Method POST -Headers $headers -ContentType 'application/json' -Body $body
+$response = $response.Content | ConvertFrom-Json
+return $response
+}
+Function Update-TenableUser{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$UUID,
+    [Parameter(Mandatory = $false)] [int]$Permissions,
+    [Parameter(Mandatory = $false)] [String[]]$Name,
+    [Parameter(Mandatory = $false)] [String[]]$Enabled,
+    [Parameter(Mandatory = $false)] [String[]]$EmailAddress
+    )
+$body = @{}
+if ($Permissions -ne $null) { $body.Add("permissions",$Permissions)}
+if ($Name -ne $null) { $body.Add("name","$Name")}
+if ($EmailAddress -ne $null) { $body.Add("email","$EmailAddress")}
+if ($Enabled -ne $null) { $body.Add("enabled","$Enabled")}
+$body = $body | ConvertTo-Json
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID" -Method PUT -Headers $headers -ContentType 'application/json' -Body $body
+$response = $response.Content | ConvertFrom-Json
+return $response
+}
+Function Get-TenableUserAuth{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$UUID
+    )
+$headers=@{}
+$headers.Add("accept", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID/authorizations" -Method GET -Headers $headers
+$response = $response.Content | ConvertFrom-Json
+return $response
+}
+Function Update-TenableUserAuth{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$UUID,
+    [Parameter(Mandatory = $false)] [String[]]$API,
+    [Parameter(Mandatory = $false)] [String[]]$Password,
+    [Parameter(Mandatory = $false)] [String[]]$SAML,
+    [Parameter(Mandatory = $false)] [String[]]$MFARequired
+    )
+
+$userauth = Get-TenableUserAuth -UUID $UUID
+$body = @{}
+if ($API -ne $null) { $body.Add("api_permitted","$API")} else { $API = $userauth.api_permitted; $body.Add("api_permitted","$API")}
+if ($Password -ne $null) { $body.Add("password_permitted","$Password")} else { $Password = $userauth.password_permitted; $body.Add("password_permitted","$Password")}
+if ($SAML-ne $null) {$body.Add("saml_permitted","$SAML") } else { $SAML = $userauth.saml_permitted; $body.Add("saml_permitted","$SAML")}
+if($MFARequired -ne $null) {$body.Add("mfa_enrollment_required","$MFARequired") }
+$body = $body | ConvertTo-Json
+
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID/authorizations" -Method PUT -Headers $headers -Body $body
+$response = $response.Content | ConvertFrom-Json
+$userauth = Get-TenableUserAuth -UUID $UUID
+return $userauth
 }
