@@ -51,3 +51,14 @@ Get-TenableVulnerabilityList
 Get-TenablePluginList
 
 Get-TenableAuditLog
+
+Get-TenableUser *add -UUID for individual user
+
+Create-TenableUser -mailAddress -Password -Permissions -Name
+
+Update-TenableUser -UUID -Permissions -Name -Enabled -EmailAddress
+
+Get-TenableUserAuth -UUID
+
+Update-TenableUserAuth -API -Password -SAML -MFARequired
+
