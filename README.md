@@ -12,53 +12,88 @@ You need to variables set up. the $apikey. This is an example of what they shoul
 
 $apikey = "accessKey=XXXX;secretKey=a246bf07a405d6c8bds5af5616516512110190f7a9a22a1c0257"
 
-You could just add the UUID for the scanner for the commands that use the ScannerID. In my use case, I reference pretty much a single scannerID group and found that it's easier to define that once. 
-
 There's still work to be done and most of these functions don't have proper error handling. Used at your own risk.
 
 Functions Include
 
-Get-TenableScans
+Add-TenableGroupMember -GroupID 1234 -UserID 1234
 
-Remove-TenableScan -ScanID 111
-
-Start-TenableScan -ScanID 111
-
-Stop-TenableScan -ScanID 111
-
-Get-TenableScanInfo -ScanID 111
-
-Get-TenableAssetList
-
-Get-TenableAssetInfo -UUID 67555555-13d0-5555-1111-0b08315a2f64
-
-Get-TenableScannerList
-
-Update-TenableScan -ScanID 1111 -TextTargets "TestComputer1,TestComputer2" -ScannerID 67555555-13d0-5555-1111-0b08315a2f64  *This currently only updates TextTargets. It may be broken out later
+Connect-ToTenable *Currently not in use
 
 Export-TenableVulnerabilities -AssetNum 500
 
-Get-VulnerabilityExportStatus 
-
 Get-TenableAgentList
+
+Get-TenableAssetInfo -UUID 67555555-13d0-5555-1111-0b08315a2f64
+
+Get-TenableAssetList
+
+Get-TenableAuditLog
 
 Get-TenableCredentialList
 
 Get-TenableExclusionList
 
-Get-TenableVulnerabilityList
+Get-TenableGroupMembers -GroupID
+
+Get-TenableGroups
 
 Get-TenablePluginList
 
-Get-TenableAuditLog
+Get-TenableScanInfo -ScanID 111
 
-Get-TenableUser *add -UUID for individual user
+Get-TenableScannerList
 
-Create-TenableUser -mailAddress -Password -Permissions -Name
+Get-TenableScans
+
+Get-TenableUser -UUID *for individual user or no UUID for all users
+
+Get-TenableVulnerabilityList
+
+Get-VulnerabilityExportStatus 
+
+New-TenableGroup -Name "Group Name"
+
+New-TenableUser -emailAddress "user@domain.com" -Password "Clear Text Password" -Name "First Last" -Permissions *See tenable permissions
+
+Remove-TenableGroup -GroupID 111
+
+Remove-TenableGroupMember -GroupID 111 -UserID 111
+
+Remove-TenableScan -ScanID 111
+
+Remove-TenableUser -UserID 111
+
+Start-TenableScan -ScanID 111
+
+Stop-TenableScan -ScanID 111
+
+Update-TenableGroup -GroupID 111 -Name "New Group Name"
+
+Update-TenableScan -ScanID 1111 -TextTargets "TestComputer1,TestComputer2" -ScannerID 67555555-13d0-5555-1111-0b08315a2f64  *more work to be done here
+
+Update-TenableUser -UUID -EmailAddress -Name -Permissions -Enabled
+
+Update-TenableUserAuth -Password -SAML -API -MFARequired
+
+
+
+
+
+
+
+
+
+
+
+
 
 Update-TenableUser -UUID -Permissions -Name -Enabled -EmailAddress
 
 Get-TenableUserAuth -UUID
 
 Update-TenableUserAuth -API -Password -SAML -MFARequired
+
+New-TenableGroup -Name "Group Name"
+
 
