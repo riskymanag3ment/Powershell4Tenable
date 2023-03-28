@@ -75,25 +75,3 @@ Update-TenableScan -ScanID 1111 -TextTargets "TestComputer1,TestComputer2" -Scan
 Update-TenableUser -UUID -EmailAddress -Name -Permissions -Enabled
 
 Update-TenableUserAuth -Password -SAML -API -MFARequired
-
-
-
-
-
-
-
-
-
-
-
-
-
-Update-TenableUser -UUID -Permissions -Name -Enabled -EmailAddress
-
-Get-TenableUserAuth -UUID
-
-Update-TenableUserAuth -API -Password -SAML -MFARequired
-
-New-TenableGroup -Name "Group Name"
-
-
