@@ -1,7 +1,7 @@
 ﻿# Powershell4Tenable
 # 2023.03.24 Added User List, Create, Update and Delet
 
-Function ConnectTo-Tenable {
+Function Connect-ToTenable { #This function is BS and shouldn't exist. 
 param(
     [Parameter(Mandatory = $true)] [String[]]$AccessKey,
     [Parameter(Mandatory = $true)] [String[]]$SecretKey
@@ -103,6 +103,7 @@ param(
     [Parameter(Mandatory = $false)] [String[]]$ScannerID,
     [Parameter(Mandatory = $false)] [String[]]$EmailAddress
     )
+    
     if ($ScannerID -eq $null){
         $ScannerName = Get-TenableScanInfo -ScanID $ScanID | select scanner_name
         $ScannerName = $ScannerName.scanner_name
@@ -259,7 +260,7 @@ param(
     $response = $response.Content | ConvertFrom-Json
     return $response
 }
-Function Create-TenableUser{
+Function New-TenableUser{
 param(    
     [Parameter(Mandatory = $true)] [String[]]$EmailAddress,
     [Parameter(Mandatory = $true)] [String[]]$Password,
@@ -338,4 +339,115 @@ $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID/author
 $response = $response.Content | ConvertFrom-Json
 $userauth = Get-TenableUserAuth -UUID $UUID
 return $userauth
+}
+
+Function New-TenableGroup{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$Name
+    )
+
+$body = @{}
+$body.Add("name","$Name")
+$body = $body | ConvertTo-Json
+
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups" -Method POST -Headers $headers -ContentType 'application/json' -Body $body
+$response = $response.Content | ConvertFrom-Json
+return $response
+}
+
+Function Get-TenableGroups{
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups" -Method GET -Headers $headers
+$response = $response.Content | ConvertFrom-Json
+$response = $response.groups
+return $response
+}
+
+Function Update-TenableGroup{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$GroupID,
+    [Parameter(Mandatory = $true)] [String[]]$Name
+    )
+
+$body = @{}
+$body.Add("name",$Name)
+$body = $body | ConvertTo-Json
+
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID" -Method PUT -Headers $headers -ContentType 'application/json' -Body $body
+$response = $response.Content | ConvertFrom-Json
+return $response
+}
+
+Function Remove-TenableGroup{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$GroupID
+    )
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID" -Method DELETE -Headers $headers
+$response = $response.Content | ConvertFrom-Json
+return $response
+}
+
+Function Get-TenableGroupMembers{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$GroupID
+    )
+
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID/users" -Method GET -Headers $headers
+$response = $response.Content | ConvertFrom-Json
+$response = $response.users
+return $response
+}
+
+Function Add-TenableGroupMember{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$GroupID,
+    [Parameter(Mandatory = $true)] [String[]]$UserID
+    
+    )
+
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID/users/$UserID" -Method POST -Headers $headers
+$response = $response.Content | ConvertFrom-Json
+return $response
+
+}
+
+Function Remove-TenableGroupMember{
+param(    
+    [Parameter(Mandatory = $true)] [String[]]$GroupID,
+    [Parameter(Mandatory = $true)] [String[]]$UserID
+    
+    )
+
+$headers=@{}
+$headers.Add("Accept", "application/json")
+$headers.Add("content-type", "application/json")
+$headers.Add("X-ApiKeys", $apikey)
+$response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID/users/$UserID" -Method DELETE -Headers $headers
+$response = $response.Content | ConvertFrom-Json
+return $response
+
 }
