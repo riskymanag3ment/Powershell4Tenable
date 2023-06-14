@@ -1,15 +1,15 @@
 ﻿# Powershell4Tenable
-# 2023.03.24 Added User List, Create, Update and Delet
+# 2023.03.24 Added User List, Create, Update and Delete
 
 Function Connect-ToTenable { #This function is BS and shouldn't exist. 
 param(
     [Parameter(Mandatory = $true)] [String[]]$AccessKey,
     [Parameter(Mandatory = $true)] [String[]]$SecretKey
     )
-    $apikey = "accessKey=$AccessKey;secretKey=$SecretKey"
+    $TenableAPIKey = "accessKey=$AccessKey;secretKey=$SecretKey"
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/api/v3/access-control/permissions/users/me' -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     return $response.permissions | select name
@@ -17,7 +17,7 @@ param(
 Function Get-TenableScans {
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/scans' -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     Return $response.scans
@@ -28,7 +28,7 @@ param(
     )
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri https://cloud.tenable.com/scans/$ScanID -Method DELETE -Headers $headers
 }
 Function Start-TenableScan {
@@ -38,7 +38,7 @@ param(
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("Content-Type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri https://cloud.tenable.com/scans/$ScanID/launch -Method POST -Headers $headers
 }
 Function Stop-TenableScan {
@@ -48,7 +48,7 @@ param(
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("Content-Type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri https://cloud.tenable.com/scans/$ScanID/stop -Method POST -Headers $headers
 }
 Function Get-TenableScanInfo {
@@ -57,7 +57,7 @@ param(
     )
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri https://cloud.tenable.com/scans/$ScanID/ -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     Return $response.info
@@ -65,7 +65,7 @@ param(
 Function Get-TenableAssetList {
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/assets' -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     Return $response.assets
@@ -78,7 +78,7 @@ Function Search-TenableAssets {
     if ($Limit -eq $null) { $Limit = "200" }
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $body = @{
     properties = $SearchString
     limit = $Limit
@@ -91,7 +91,7 @@ Function Search-TenableAssets {
 Function Get-TenableScannerList {
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/scanners' -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     Return $response.scanners
@@ -119,7 +119,7 @@ param(
     
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/scans/$ScanID" -Method PUT -Headers $headers -Body "{""settings"":$body}"
     $response = $response.Content | ConvertFrom-Json
     Clear-Variable $ScannerID
@@ -137,7 +137,7 @@ param(
 
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/vulns/export' -Method POST -Headers $headers -ContentType 'application/json' -Body $body
     $response = $response.Content | ConvertFrom-Json
     Return $response.export_uuid
@@ -145,7 +145,7 @@ param(
 Function Get-VulnerabilityExportStatus {
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/vulns/export/status' -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     Return $response.exports
@@ -156,7 +156,7 @@ param(
     )
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri https://cloud.tenable.com/scanners/$ScannerID/agents -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response.agents
@@ -164,7 +164,7 @@ return $response.agents
 Function Get-TenableCredentialList {
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/credentials' -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response.credentials
@@ -172,7 +172,7 @@ return $response.credentials
 Function Get-TenableExclusionList {
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/exclusions' -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response.exclusions
@@ -180,7 +180,7 @@ return $response.exclusions
 Function Get-TenableVulnFilterList {
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/filters/workbenches/vulnerabilities' -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response.filters
@@ -188,7 +188,7 @@ return $response.filters
 Function Get-TenableVulnerabilityList {
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri 'https://cloud.tenable.com/workbenches/vulnerabilities' -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response.vulnerabilities
@@ -200,7 +200,7 @@ param(
 if ($Size -eq $null ){ $Size = "10000" }
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/plugins/plugin?last_updated=2021-01-01&size=$Size" -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response.filters
@@ -212,7 +212,7 @@ param(
 if ($Size -eq $null ){ $Size = "100" }
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/audit-log/v1/events?$" -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response.events
@@ -223,7 +223,7 @@ param(
     )
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/assets/$uuid" -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response
@@ -235,7 +235,7 @@ param(
 if ($UUID -ne $null) {
     $headers=@{}
     $headers.Add("accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID" -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     return $response
@@ -243,7 +243,7 @@ if ($UUID -ne $null) {
 else {
     $headers=@{}
     $headers.Add("Accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users" -Method GET -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     return $response.users
@@ -255,7 +255,7 @@ param(
     )
     $headers=@{}
     $headers.Add("accept", "application/json")
-    $headers.Add("X-ApiKeys", $apikey)
+    $headers.Add("X-ApiKeys", $TenableAPIKey)
     $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID" -Method DELETE -Headers $headers
     $response = $response.Content | ConvertFrom-Json
     return $response
@@ -265,18 +265,19 @@ param(
     [Parameter(Mandatory = $true)] [String[]]$EmailAddress,
     [Parameter(Mandatory = $true)] [String[]]$Password,
     [Parameter(Mandatory = $true)] [String[]]$Name,
-    [Parameter(Mandatory = $true)] [String[]]$Permissions
+    [Parameter(Mandatory = $true)] [Int[]]$Permissions
     )
-$body = @{
-    username = $EmailAddress
-    password = $Password
-    permissions = $Permissions
-    name = $name
-    }
+$body=@{}
+$body.Add("username","$EmailAddress")
+$body.Add("password","$Password")
+$body.Add("name","$Name")
+$body.Add("permissions",$Permissions)
 $body = $body | ConvertTo-Json
+
+
 $headers=@{}
 $headers.Add("Accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users" -Method POST -Headers $headers -ContentType 'application/json' -Body $body
 $response = $response.Content | ConvertFrom-Json
 return $response
@@ -298,7 +299,7 @@ $body = $body | ConvertTo-Json
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID" -Method PUT -Headers $headers -ContentType 'application/json' -Body $body
 $response = $response.Content | ConvertFrom-Json
 return $response
@@ -309,7 +310,7 @@ param(
     )
 $headers=@{}
 $headers.Add("accept", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID/authorizations" -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response
@@ -334,7 +335,7 @@ $body = $body | ConvertTo-Json
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/users/$UUID/authorizations" -Method PUT -Headers $headers -Body $body
 $response = $response.Content | ConvertFrom-Json
 $userauth = Get-TenableUserAuth -UUID $UUID
@@ -353,7 +354,7 @@ $body = $body | ConvertTo-Json
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups" -Method POST -Headers $headers -ContentType 'application/json' -Body $body
 $response = $response.Content | ConvertFrom-Json
 return $response
@@ -363,7 +364,7 @@ Function Get-TenableGroups{
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups" -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 $response = $response.groups
@@ -383,7 +384,7 @@ $body = $body | ConvertTo-Json
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID" -Method PUT -Headers $headers -ContentType 'application/json' -Body $body
 $response = $response.Content | ConvertFrom-Json
@@ -397,7 +398,7 @@ param(
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID" -Method DELETE -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response
@@ -411,7 +412,7 @@ param(
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID/users" -Method GET -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 $response = $response.users
@@ -428,7 +429,7 @@ param(
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID/users/$UserID" -Method POST -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response
@@ -445,7 +446,7 @@ param(
 $headers=@{}
 $headers.Add("Accept", "application/json")
 $headers.Add("content-type", "application/json")
-$headers.Add("X-ApiKeys", $apikey)
+$headers.Add("X-ApiKeys", $TenableAPIKey)
 $response = Invoke-WebRequest -Uri "https://cloud.tenable.com/groups/$GroupID/users/$UserID" -Method DELETE -Headers $headers
 $response = $response.Content | ConvertFrom-Json
 return $response
