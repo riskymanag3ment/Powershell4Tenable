@@ -1,78 +1,212 @@
-# Powershell4Tenable
+# TenablePowerShell Module
 
-Tenable for Powershell is a Powershell module that adds a variety of controls and reporting to the Tenable.io cloud, allowing users to import data into Tenable for scans, export data from Tenable and correlate information across systems.
+A comprehensive PowerShell module for interacting with the Tenable.io cloud vulnerability management platform. This module provides functions to manage scans, assets, users, groups, tags, and more through the Tenable.io API.
 
-You must set the following variables
+## Prerequisites
 
-Very few of these powershell functions have great failsafe processes, so please beware. This is not an elegent solution. 
+- PowerShell 5.1 or later
+- Valid Tenable.io API keys
+- Network access to cloud.tenable.com
 
-PS C:\> Import-Module .\TenablePowershell.psm1
+## Installation
 
-You need to variables set up. the $apikey. This is an example of what they should look like. 
+1. Download the `TenablePowershell.psm1` file
+2. Place it in your PowerShell modules directory or import it directly:
+   ```powershell
+   Import-Module .\TenablePowershell.psm1
+   ```
 
-$TenableAPIKey = "accessKey=XXXX;secretKey=a246bf07a405d6c8bds5af5616516512110190f7a9a22a1c0257"
-It's recommended to save this into your Powershell Profile
+## Configuration
 
-There's still work to be done and most of these functions don't have proper error handling. Used at your own risk.
+Before using any functions, you must set your Tenable API key as a global variable:
 
-Functions Include
+```powershell
+$global:TenableAPIKey = "accessKey=your_access_key;secretKey=your_secret_key"
+```
 
-Add-TenableGroupMember -GroupID 1234 -UserID 1234
+## Function Categories
 
-Connect-ToTenable *Currently not in use
+### Authentication & Connection
+- `Connect-ToTenable` - Basic connection test (returns user permissions)
 
-Export-TenableVulnerabilities -AssetNum 500
+### API Access Control
+- `Get-TenableAllowedIPs` - Retrieve allowed IP addresses for API access
+- `Update-TenableAPIAccess` - Update allowed IP addresses for API access
 
-Get-TenableAgentList
+### Scanner Management
+- `Get-TenableScannerList` - List all available scanners
+- `Get-TenableAgentList` - List agents for a specific scanner
 
-Get-TenableAssetInfo -UUID 67555555-13d0-5555-1111-0b08315a2f64
+### Group Management
+- `New-TenableGroup` - Create a new access group
+- `Get-TenableGroups` - List all access groups
+- `Update-TenableGroup` - Update an existing group
+- `Remove-TenableGroup` - Delete a group
+- `Get-TenableGroupMembers` - Get members of a specific group
+- `Add-TenableGroupMember` - Add user to a group
+- `Remove-TenableGroupMember` - Remove user from a group
 
-Get-TenableAssetList
+### Permission Management
+- `New-TenablePermission` - Create new access permissions
+- `Get-TenablePermissions` - Retrieve permissions with optional filtering
 
-Get-TenableAuditLog
+### User Management
+- `Get-TenableUser` - Get user details (all users or specific UUID)
+- `New-TenableUser` - Create a new user account
+- `Update-TenableUser` - Update existing user account
+- `Remove-TenableUser` - Delete a user account
+- `Get-TenableUserAuth` - Get user authorization settings
+- `Update-TenableUserAuth` - Update user authorization settings
 
-Get-TenableCredentialList
+### Scan Management
+- `Get-TenableScans` - List all scans
+- `New-TenableScans` - Create new scan (function incomplete)
+- `Update-TenableScan` - Update existing scan configuration
+- `Remove-TenableScan` - Delete a scan
+- `Get-TenableScanInfo` - Get detailed information about a specific scan
 
-Get-TenableExclusionList
+### Scan Control
+- `Start-TenableScan` - Launch a scan
+- `Pause-TenableScan` - Pause a running scan
+- `Resume-TenableScan` - Resume a paused scan
+- `Stop-TenableScan` - Stop a scan (with optional force parameter)
 
-Get-TenableGroupMembers -GroupID
+### Asset Management
+- `Get-TenableAssetList` - List all assets
+- `Get-TenableAssetInfo` - Get detailed asset information
+- `Search-TenableAssets` - Search assets with specific criteria
+- `Move-TenableAsset` - Move assets between networks
+- `Remove-TenableAsset` - Delete assets (soft or hard delete)
 
-Get-TenableGroups
+### Network Management
+- `Get-TenableNets` - List all networks
+- `New-TenableNet` - Create a new network
+- `Update-TenableNet` - Update existing network
+- `Remove-TenableNet` - Delete a network
+- `Get-TenableNetAssetCount` - Get asset count for network
 
-Get-TenablePluginList
+### Tag Management
+- `Get-TenableTags` - List tags with optional filtering
+- `New-TenableTag` - Create a new tag
+- `Update-TenableTag` - Update existing tag
+- `Remove-TenableTag` - Delete a tag
+- `Add-TenableAssetTag` - Assign tags to assets
+- `Remove-TenableAssetTag` - Remove tags from assets
+- `Get-TenableAssetTags` - Get tags assigned to assets
+- `Get-TenableTagCategories` - List all tag categories
+- `Get-TenableTagValues` - Get values for a specific tag category
 
-Get-TenableScanInfo -ScanID 111
+### Vulnerability Management
+- `Get-TenableVulnerabilityList` - List vulnerabilities from workbench
+- `Get-TenableVulnDetail` - Get detailed vulnerability information
+- `Get-TenableVulnFamilies` - List vulnerability families
+- `Export-TenableVulnerabilities` - Export vulnerability data
+- `Get-VulnerabilityExportStatus` - Check export status
+- `Get-VulnerabilityExportChunk` - Download export chunk data
 
-Get-TenableScannerList
+### Credential Management
+- `Get-TenableCredType` - List credential types
+- `Get-TenableCredList` - List all credentials
+- `Get-TenableCredDetails` - Get detailed credential information
+- `New-TenableCred` - Create new credential (function incomplete)
 
-Get-TenableScans
+### Filter Functions
+- `Get-TenableAgentFilter` - Get agent filter options
+- `Get-TenableAssetFilter` - Get asset filter options
+- `Get-TenableCredentialFilter` - Get credential filter options
+- `Get-TenableReportFilter` - Get report filter options
+- `Get-TenableScanFilter` - Get scan filter options
+- `Get-TenableScanHistoryFilter` - Get scan history filter options
+- `Get-TenableVulnFilter` - Get vulnerability filter options
 
-Get-TenableUser -UUID *for individual user or no UUID for all users
+### Exclusion Management
+- `Get-TenableExclusionList` - List scan exclusions
+- `Update-TenableExclusion` - Update exclusion settings
+- `Remove-TenableExclusion` - Delete exclusions
 
-Get-TenableVulnerabilityList
+### Cloud Connector
+- `Get-TenableCloudCon` - List cloud connectors
 
-Get-VulnerabilityExportStatus 
+### Reporting
+- `Create-TenableReport` - Create reports (function incomplete)
 
-New-TenableGroup -Name "Group Name"
+### Compliance
+- `Get-TenablePCIList` - List PCI attestations
 
-New-TenableUser -emailAddress "user@domain.com" -Password "Clear Text Password" -Name "First Last" -Permissions *See tenable permissions
+### Audit & Logging
+- `Get-TenableAuditLog` - Retrieve audit log events (function needs work)
 
-Remove-TenableGroup -GroupID 111
+## Usage Examples
 
-Remove-TenableGroupMember -GroupID 111 -UserID 111
+### Basic Connection Test
+```powershell
+$permissions = Connect-ToTenable
+```
 
-Remove-TenableScan -ScanID 111
+### List All Scans
+```powershell
+$scans = Get-TenableScans
+$scans | Format-Table name, status, creation_date
+```
 
-Remove-TenableUser -UserID 111
+### Create a New User
+```powershell
+$newUser = New-TenableUser -EmailAddress "user@company.com" -Password "SecurePass123!" -Name "John Doe" -Permissions 16
+```
 
-Start-TenableScan -ScanID 111
+### Search for Assets
+```powershell
+$assets = Search-TenableAssets -SearchString "hostname:web-server" -Limit 100
+```
 
-Stop-TenableScan -ScanID 111
+### Create and Assign Tags
+```powershell
+$tag = New-TenableTag -CategoryName "Environment" -Value "Production" -Description "Production environment assets"
+Add-TenableAssetTag -AssetUUIDs @("asset-uuid-1", "asset-uuid-2") -TagUUIDs @($tag.uuid)
+```
 
-Update-TenableGroup -GroupID 111 -Name "New Group Name"
+### Start a Scan
+```powershell
+Start-TenableScan -ScanID "scan-uuid-here"
+```
 
-Update-TenableScan -ScanID 1111 -TextTargets "TestComputer1,TestComputer2" -ScannerID 67555555-13d0-5555-1111-0b08315a2f64  *more work to be done here
+## Error Handling
 
-Update-TenableUser -UUID -EmailAddress -Name -Permissions -Enabled
+Most functions return the JSON response from the Tenable API. Check the response for error messages or HTTP status codes. Some functions may throw PowerShell exceptions for invalid parameters.
 
-Update-TenableUserAuth -Password -SAML -API -MFARequired
+## Known Issues
+
+- `New-TenableScans` function is incomplete
+- `New-TenableCred` function is incomplete  
+- `Create-TenableReport` function doesn't work properly
+- `Get-TenableAuditLog` function needs additional work
+- `Update-TenableAPIAccess` has a bug where `$body` is referenced before initialization
+
+## API Rate Limits
+
+Be mindful of Tenable.io API rate limits when using these functions in loops or automated scripts. Consider adding delays between API calls for bulk operations.
+
+## Security Notes
+
+- Store API keys securely and never commit them to version control
+- Use least-privilege principles when creating users and permissions
+- Regularly rotate API keys according to your security policies
+
+## Contributing
+
+This module appears to be a work in progress. When contributing:
+- Follow PowerShell naming conventions
+- Add proper parameter validation
+- Include error handling
+- Add help documentation for functions
+- Test thoroughly before submitting changes
+
+## License
+
+Please check with the original author for licensing information.
+
+## Support
+
+For Tenable.io API documentation, visit: https://developer.tenable.com/reference/navigate
+
+For issues with this PowerShell module, contact the original author or create issues in the repository.
