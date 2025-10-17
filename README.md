@@ -482,7 +482,6 @@ When contributing to this module:
 
 ### Version 2.0.1 (2025-10-17)
 - Added comprehensive test suite (`Test-TenableModule.ps1`)
-- 35 core functions validated with 91% success rate
 - Test modes: ReadOnly, SafeWrite, Full, DryRun
 - Automated test reporting with logs and CSV exports
 - Updated documentation with testing guidance
